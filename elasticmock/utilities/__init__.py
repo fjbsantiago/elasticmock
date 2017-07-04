@@ -3,6 +3,7 @@
 import random
 import string
 import hashlib
+import collections
 
 from sortedcontainers import SortedDict
 
@@ -18,7 +19,7 @@ class RecursivelySortedDict(SortedDict):
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.sort_self_recursively()
+        self.sort_dict_recursively(self)
 
     def __setitem__(self, k, v):
         if isinstance(v, dict):
@@ -26,10 +27,23 @@ class RecursivelySortedDict(SortedDict):
 
         super().__setitem__(k, v)
 
-    def sort_self_recursively(self):
-        for k, v in self.items():
+    def sort_dict_recursively(self, obj):
+        for k, v in obj.items():
+
             if isinstance(v, dict):
-                self[k] = RecursivelySortedDict(v)
+                obj[k] = RecursivelySortedDict(v)
+
+            elif isinstance(v, collections.Iterable):
+                self.sort_items_recursively(v)
+
+    def sort_items_recursively(self, items):
+        for item in items:
+
+            if isinstance(item, dict):
+                self.sort_dict_recursively(item)
+
+            elif not isinstance(item, str) and isinstance(item, collections.Iterable):
+                self.sort_items_recursively(item)
 
 def generate_str_key(*args, **kwargs):
     """Converts elastic search kwargs into its string representation
@@ -59,7 +73,4 @@ def generate_pretty_key(*args, **kwargs):
 def generate_key(*args, **kwargs):
     """Converts key to md5 hash and returns it as a string 
     """
-    print('===================================================')
-    print(generate_str_key(**kwargs))
-    print('===================================================')
     return hashlib.md5(generate_str_key(**kwargs).encode()).hexdigest()

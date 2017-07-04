@@ -14,18 +14,19 @@ def save_to_file(file_name, data):
         f.write(serialized)
 
 def persist(f):
-    print('Registering: {}'.format(f))
     @wraps(f)
     def decorated(*args, **kwargs):
         result = f(*args, **kwargs)
         key = generate_key(*args, **kwargs)
-        file_name = "{}_{}".format(TestCase.id(), key)
-        save_to_file(key, result)
+        file_name = "{}_{}".format(RecordElasticsearch.scope, key)
+        save_to_file(file_name, result)
 
         return result
     return decorated
 
 class RecordElasticsearch(Elasticsearch):
+    # Identifies the test function used to invoke the class
+    scope = ''
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

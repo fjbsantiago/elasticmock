@@ -25,7 +25,7 @@ def _get_elasticmock(hosts=None, *args, **kwargs):
 
 
 
-    ADD function name to response files name to make it easier to know which files were created by which test
+    #ADD function name to response files name to make it easier to know which files were created by which test
 
 def elasticmock(f):
     @wraps(f)
@@ -39,7 +39,8 @@ def elasticmock(f):
 def elasticrecord(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        print('Recording this guy: {}'.format(f.func_name))
+        #print('Recording this guy: {}'.format(f.__name__))
+        RecordElasticsearch.scope = f.__name__
         with patch('elasticsearch.Elasticsearch', RecordElasticsearch):
             result = f(*args, **kwargs)
         return result
