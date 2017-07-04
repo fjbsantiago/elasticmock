@@ -5,8 +5,8 @@ from elasticsearch.client import _normalize_hosts
 from mock import patch
 
 from elasticmock.fake_elasticsearch import FakeElasticsearch
-from elasticmock.record_elasticsearch import RecordElasticsearch
-from elasticmock.recorded_elasticsearch import RecordedElasticsearch
+from elasticmock.recorder import Recorder
+from elasticmock.replayer import Replayer
 
 ELASTIC_INSTANCES = {}
 
@@ -32,20 +32,20 @@ def elasticmock(f):
         return result
     return decorated
 
-def elasticrecord(f):
+def record(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        RecordElasticsearch.scope = f.__name__
-        with patch('elasticsearch.Elasticsearch', RecordElasticsearch):
+        Recorder.scope = f.__name__
+        with patch('elasticsearch.Elasticsearch', Recorder):
             result = f(*args, **kwargs)
         return result
     return decorated
 
-def elasticrecorded(f):
+def replay(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        RecordedElasticsearch.scope = f.__name__
-        with patch('elasticsearch.Elasticsearch', RecordedElasticsearch):
+        Replayer.scope = f.__name__
+        with patch('elasticsearch.Elasticsearch', Replayer):
             result = f(*args, **kwargs)
         return result
     return decorated

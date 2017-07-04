@@ -4,7 +4,7 @@ from functools import wraps
 from elasticsearch import Elasticsearch
 
 from elasticmock.utilities import generate_key
-from elasticmock.elasticrecorder import Recorder
+from elasticmock.elasticrecorder import ElasticRecorder
 
 def save_to_file(file_name, data):
     path = './test/fixtures/es/{}'.format(file_name)
@@ -17,13 +17,13 @@ def persist(f):
     def decorated(*args, **kwargs):
         result = f(*args, **kwargs)
         key = generate_key(*args, **kwargs)
-        file_name = "{}_{}".format(RecordElasticsearch.scope, key)
+        file_name = "{}_{}".format(Recorder.scope, key)
         save_to_file(file_name, result)
 
         return result
     return decorated
 
-class RecordElasticsearch(Elasticsearch, Recorder):
+class Recorder(Elasticsearch, ElasticRecorder):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
