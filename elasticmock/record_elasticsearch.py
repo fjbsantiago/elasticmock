@@ -1,11 +1,10 @@
 import json
-import hashlib
 from functools import wraps
-from unittest import TestCase
 
 from elasticsearch import Elasticsearch
 
 from elasticmock.utilities import generate_key
+from elasticmock.elasticrecorder import Recorder
 
 def save_to_file(file_name, data):
     path = './test/fixtures/es/{}'.format(file_name)
@@ -24,10 +23,7 @@ def persist(f):
         return result
     return decorated
 
-class RecordElasticsearch(Elasticsearch):
-    # Identifies the test function used to invoke the class
-    scope = ''
-
+class RecordElasticsearch(Elasticsearch, Recorder):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

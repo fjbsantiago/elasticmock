@@ -23,10 +23,6 @@ def _get_elasticmock(hosts=None, *args, **kwargs):
         ELASTIC_INSTANCES[elastic_key] = connection
     return connection
 
-
-
-    #ADD function name to response files name to make it easier to know which files were created by which test
-
 def elasticmock(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -39,7 +35,6 @@ def elasticmock(f):
 def elasticrecord(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        #print('Recording this guy: {}'.format(f.__name__))
         RecordElasticsearch.scope = f.__name__
         with patch('elasticsearch.Elasticsearch', RecordElasticsearch):
             result = f(*args, **kwargs)
@@ -49,6 +44,7 @@ def elasticrecord(f):
 def elasticrecorded(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        RecordedElasticsearch.scope = f.__name__
         with patch('elasticsearch.Elasticsearch', RecordedElasticsearch):
             result = f(*args, **kwargs)
         return result
