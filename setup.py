@@ -17,8 +17,9 @@ setup(
     include_package_data=True,
     platforms='any',
     install_requires=[
-        'elasticsearch<=1.9.0',
-        'mock<=1.0.1'
+        'elasticsearch>=5.0.0,<6.0.0',
+        'mock<=1.0.1',
+        'sortedcontainers>=1.5.7',
     ],
     classifiers=[
         'Environment :: Web Environment',
